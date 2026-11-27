@@ -34,6 +34,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Ensure backmerge target branch exists
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if ! git ls-remote --exit-code --heads origin dev >/dev/null; then
+            git push origin HEAD:refs/heads/dev
+          fi
+
       # Semantic release runs its own Gradle build command.
       # Only dev and main branch will generate a release as specified by .releaserc
       - name: Release
