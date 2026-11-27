@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.6.0",
+  "version": "1.0.0",
   "patches": [
     {
       "name": "XP Hero | Choose S-Ticket Trait",
@@ -16,6 +16,13 @@
           "appIconColor": "#F5A623",
           "signatures": null,
           "targets": [
+            {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
             {
               "version": "27.0.0",
               "versionCodes": null,
@@ -91,6 +98,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -123,6 +137,13 @@
           "appIconColor": "#F5A623",
           "signatures": null,
           "targets": [
+            {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
             {
               "version": "27.0.0",
               "versionCodes": null,
@@ -157,6 +178,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -190,6 +218,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -215,6 +250,13 @@
           "appIconColor": "#F5A623",
           "signatures": null,
           "targets": [
+            {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
             {
               "version": "27.0.0",
               "versionCodes": null,
@@ -249,6 +291,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -281,6 +330,13 @@
           "appIconColor": "#F5A623",
           "signatures": null,
           "targets": [
+            {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
             {
               "version": "27.0.0",
               "versionCodes": null,
@@ -370,6 +426,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -431,6 +494,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -463,6 +533,13 @@
           "appIconColor": "#F5A623",
           "signatures": null,
           "targets": [
+            {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
             {
               "version": "27.0.0",
               "versionCodes": null,
@@ -497,6 +574,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -530,6 +614,13 @@
           "signatures": null,
           "targets": [
             {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
+            {
               "version": "27.0.0",
               "versionCodes": null,
               "isExperimental": true,
@@ -555,6 +646,13 @@
           "appIconColor": "#F5A623",
           "signatures": null,
           "targets": [
+            {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
             {
               "version": "27.0.0",
               "versionCodes": null,
@@ -600,6 +698,13 @@
           "appIconColor": "#F5A623",
           "signatures": null,
           "targets": [
+            {
+              "version": "27.2.0",
+              "versionCodes": null,
+              "isExperimental": true,
+              "minSdk": null,
+              "description": null
+            },
             {
               "version": "27.0.0",
               "versionCodes": null,
