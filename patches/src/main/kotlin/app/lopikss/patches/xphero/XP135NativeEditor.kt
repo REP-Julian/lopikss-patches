@@ -18,6 +18,7 @@ import java.security.MessageDigest
  */
 internal object XP135NativeEditor {
     const val ARM64 = "lib/arm64-v8a/libil2cpp.so"
+    const val ARM32 = "lib/armeabi-v7a/libil2cpp.so"
     private const val ORIGINAL_SHA =
         "88b591e6099c55b1147b865847a14651b108f9bd6837707371766a054c8df443"
     private const val EXPECTED_SIZE = 83_724_712
@@ -168,6 +169,274 @@ internal object XP135NativeEditor {
         }
         return input.copyOf().also { out ->
             for ((offset, _, modified) in STAR_TEMPORARY_SHARD_PATCHES_27) {
+                modified.copyInto(out, offset)
+            }
+        }
+    }
+
+    // Verified against XP Hero 27.2.0 armeabi-v7a libil2cpp.so (ELF32 ARM, file offset == VA).
+    private const val ORIGINAL_SHA_27_2_ARM32 =
+        "0b5145d4b13c9b30359880e5908ccc9a70c8497924b7d3abe24af230dd884081"
+    private const val EXPECTED_SIZE_27_2_ARM32 = 76_932_664
+    private val ARM32_NOP = byteArrayOf(0x00, 0xF0.toByte(), 0x20, 0xE3.toByte())
+    private val ARM32_BX_LR = byteArrayOf(0x1E, 0xFF.toByte(), 0x2F, 0xE1.toByte())
+
+    private const val TRAIT_OFFSET_27_2_ARM32 = 0x1BCC698
+    private val ORIGINAL_TRAIT_27_2_ARM32 = byteArrayOf(
+        0x10, 0x40, 0x2D, 0xE9.toByte(), 0x00, 0x40, 0xA0.toByte(), 0xE1.toByte()
+    )
+    private val FREE_TRAIT_27_2_ARM32 = byteArrayOf(
+        0x00, 0x00, 0xA0.toByte(), 0xE3.toByte(), 0x1E, 0xFF.toByte(), 0x2F, 0xE1.toByte()
+    )
+
+    private const val HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM32 = 0x1CD8D44
+    private val HERO_UNLOCK_COMPARE_27_2_ARM32 = byteArrayOf(
+        0x00, 0x00, 0x74, 0xE2.toByte(), 0x00, 0x00, 0xF5.toByte(), 0xE2.toByte()
+    )
+    private val ORIGINAL_HERO_UNLOCK_27_2_ARM32 = byteArrayOf(0x67, 0x00, 0x00, 0xAA.toByte())
+    private val ZERO_HERO_UNLOCK_27_2_ARM32 = byteArrayOf(0x67, 0x00, 0x00, 0xCA.toByte())
+
+    private const val TOMB_OFFSET_27_2_ARM32 = 0x1DC03F8
+    private val TOMB_CMP_27_2_ARM32 = byteArrayOf(0x00, 0x00, 0x50, 0xE3.toByte())
+    private val ORIGINAL_TOMB_27_2_ARM32 = byteArrayOf(0x64, 0x00, 0xA0.toByte(), 0xD3.toByte())
+    private val FREE_TOMB_27_2_ARM32 = byteArrayOf(0x00, 0x00, 0xA0.toByte(), 0xD3.toByte())
+
+    private const val RETURN_QUANTITY_HIGH_OFFSET_27_2_ARM32 = 0x1862BA8
+    private val ORIGINAL_RETURN_QUANTITY_HIGH_27_2_ARM32 = byteArrayOf(0xC4.toByte(), 0x3F, 0xA0.toByte(), 0xE1.toByte())
+    private val FREE_RETURN_QUANTITY_HIGH_27_2_ARM32 = byteArrayOf(0x00, 0x30, 0xA0.toByte(), 0xE3.toByte())
+    private const val RETURN_ITEM_OFFSET_27_2_ARM32 = 0x1862BAC
+    private val ORIGINAL_RETURN_ITEM_27_2_ARM32 = byteArrayOf(0x59, 0x0B, 0x01, 0xE3.toByte())
+    private val FREE_RETURN_ITEM_27_2_ARM32 = byteArrayOf(0x5A, 0x0B, 0x01, 0xE3.toByte())
+    private const val RETURN_QUANTITY_LOW_OFFSET_27_2_ARM32 = 0x1862BB0
+    private val ORIGINAL_RETURN_QUANTITY_LOW_27_2_ARM32 = byteArrayOf(0x04, 0x20, 0xA0.toByte(), 0xE1.toByte())
+
+    private const val RETURN_NO_PASS_OFFSET_27_2_ARM32 = 0x1862AE0
+    private val ORIGINAL_RETURN_NO_PASS_27_2_ARM32 = byteArrayOf(0x12, 0x00, 0x00, 0x0A)
+    private val FREE_RETURN_NO_PASS_27_2_ARM32 = byteArrayOf(0x08, 0x00, 0x00, 0x0A)
+    private const val RETURN_INACTIVE_PASS_OFFSET_27_2_ARM32 = 0x1862AF0
+    private val ORIGINAL_RETURN_INACTIVE_PASS_27_2_ARM32 = byteArrayOf(0x10, 0x80.toByte(), 0xBD.toByte(), 0x08)
+    private val FREE_RETURN_INACTIVE_PASS_27_2_ARM32 = byteArrayOf(0x04, 0x00, 0x00, 0x0A)
+
+    private const val INSTANT_RETURN_COUNT_OFFSET_27_2_ARM32 = 0x186015C
+    private val ORIGINAL_RETURN_COUNT_ENTRY_27_2_ARM32 = byteArrayOf(
+        0x10, 0x40, 0x2D, 0xE9.toByte(), 0x4C, 0x40, 0x9F.toByte(), 0xE5.toByte()
+    )
+    private const val RETURN_FREE_CONSUME_GUARD_OFFSET_27_2_ARM32 = 0x1863BF4
+    private val ORIGINAL_RETURN_FREE_CONSUME_GUARD_27_2_ARM32 = byteArrayOf(0x9C.toByte(), 0x00, 0x00, 0x0A)
+
+    private val STAR_TEMPORARY_SHARD_PATCHES_27_2_ARM32 = listOf(
+        Triple(0x1CCB374,
+            byteArrayOf(0x07, 0x20, 0xA0.toByte(), 0xE1.toByte()),
+            byteArrayOf(0x01, 0x20, 0xA0.toByte(), 0xE3.toByte())),
+        Triple(0x1CCB378,
+            byteArrayOf(0x04, 0x30, 0xA0.toByte(), 0xE1.toByte()),
+            byteArrayOf(0x00, 0x30, 0xA0.toByte(), 0xE3.toByte())),
+        Triple(0x1CCB37C,
+            byteArrayOf(0x1B, 0x1F, 0x00, 0xEB.toByte()),
+            byteArrayOf(0x9B.toByte(), 0x3F, 0x00, 0xEB.toByte())),
+        Triple(0x1CCB384,
+            byteArrayOf(0x12, 0x01, 0x00, 0x0A),
+            ARM32_NOP),
+        Triple(0x1CCB3A4,
+            byteArrayOf(0x04, 0x20, 0xA0.toByte(), 0xE1.toByte()),
+            byteArrayOf(0x01, 0x20, 0xA0.toByte(), 0xE3.toByte())),
+        Triple(0x1CCB3A8,
+            byteArrayOf(0x07, 0x30, 0xA0.toByte(), 0xE1.toByte()),
+            byteArrayOf(0x00, 0x30, 0xA0.toByte(), 0xE3.toByte())),
+    )
+
+    private fun arm32Movw(rd: Int, imm16: Int): Int =
+        0xE3000000.toInt() or ((rd and 0xF) shl 12) or ((imm16 and 0xF000) shl 4) or (imm16 and 0xFFF)
+
+    private fun knownArm32Movw(bytes: ByteArray, offset: Int, rd: Int): Boolean {
+        val code = instruction(bytes, offset)
+        if ((code and 0xFFF0F000.toInt()) != (0xE3000000.toInt() or ((rd and 0xF) shl 12))) return false
+        val imm = ((code ushr 4) and 0xF000) or (code and 0xFFF)
+        return imm in 10..5000
+    }
+
+    private fun verify272Arm32Native(input: ByteArray) {
+        require(input.size == EXPECTED_SIZE_27_2_ARM32) {
+            "Unsupported XP Hero 27.2.0 ARM32 library length"
+        }
+        require(equalAt(input, TOMB_OFFSET_27_2_ARM32 - 4, TOMB_CMP_27_2_ARM32)) {
+            "Unexpected XP Hero 27.2.0 Heroes' Tomb instructions"
+        }
+        require(equalAt(input, HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM32 - 8, HERO_UNLOCK_COMPARE_27_2_ARM32)) {
+            "Unexpected XP Hero 27.2.0 zero-piece guard comparison"
+        }
+        val normalized = input.copyOf()
+        val choices = listOf(
+            Triple(TRAIT_OFFSET_27_2_ARM32, ORIGINAL_TRAIT_27_2_ARM32, FREE_TRAIT_27_2_ARM32),
+            Triple(HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM32,
+                ORIGINAL_HERO_UNLOCK_27_2_ARM32, ZERO_HERO_UNLOCK_27_2_ARM32),
+            Triple(TOMB_OFFSET_27_2_ARM32, ORIGINAL_TOMB_27_2_ARM32, FREE_TOMB_27_2_ARM32),
+            Triple(RETURN_QUANTITY_HIGH_OFFSET_27_2_ARM32,
+                ORIGINAL_RETURN_QUANTITY_HIGH_27_2_ARM32, FREE_RETURN_QUANTITY_HIGH_27_2_ARM32),
+            Triple(RETURN_ITEM_OFFSET_27_2_ARM32,
+                ORIGINAL_RETURN_ITEM_27_2_ARM32, FREE_RETURN_ITEM_27_2_ARM32),
+            Triple(RETURN_NO_PASS_OFFSET_27_2_ARM32,
+                ORIGINAL_RETURN_NO_PASS_27_2_ARM32, FREE_RETURN_NO_PASS_27_2_ARM32),
+            Triple(RETURN_INACTIVE_PASS_OFFSET_27_2_ARM32,
+                ORIGINAL_RETURN_INACTIVE_PASS_27_2_ARM32, FREE_RETURN_INACTIVE_PASS_27_2_ARM32),
+            Triple(RETURN_FREE_CONSUME_GUARD_OFFSET_27_2_ARM32,
+                ORIGINAL_RETURN_FREE_CONSUME_GUARD_27_2_ARM32, ARM32_NOP),
+        ) + STAR_TEMPORARY_SHARD_PATCHES_27_2_ARM32
+        for ((offset, original, changed) in choices) {
+            require(equalAt(input, offset, original) || equalAt(input, offset, changed)) {
+                "Unsupported XP Hero 27.2.0 native instruction at 0x" + offset.toString(16)
+            }
+            original.copyInto(normalized, offset)
+        }
+        require(equalAt(input, RETURN_QUANTITY_LOW_OFFSET_27_2_ARM32, ORIGINAL_RETURN_QUANTITY_LOW_27_2_ARM32) ||
+            knownArm32Movw(input, RETURN_QUANTITY_LOW_OFFSET_27_2_ARM32, 2)) {
+            "Unsupported XP Hero 27.2.0 Return daily quantity instruction"
+        }
+        ORIGINAL_RETURN_QUANTITY_LOW_27_2_ARM32.copyInto(normalized, RETURN_QUANTITY_LOW_OFFSET_27_2_ARM32)
+        require(equalAt(input, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM32, ORIGINAL_RETURN_COUNT_ENTRY_27_2_ARM32) ||
+            (knownArm32Movw(input, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM32, 0) &&
+                equalAt(input, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM32 + 4, ARM32_BX_LR))) {
+            "Unsupported XP Hero 27.2.0 free Return count function"
+        }
+        ORIGINAL_RETURN_COUNT_ENTRY_27_2_ARM32.copyInto(normalized, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM32)
+        val sha = MessageDigest.getInstance("SHA-256").digest(normalized)
+            .joinToString("") { "%02x".format(it) }
+        require(sha == ORIGINAL_SHA_27_2_ARM32) {
+            "Unexpected XP Hero 27.2.0 ARM32 code; refusing native edits"
+        }
+    }
+
+    private fun freeHeroesTombRefills272Arm32(input: ByteArray, freeReturnDaily: Int): ByteArray {
+        verify272Arm32Native(input)
+        return input.copyOf().also { result ->
+            FREE_TOMB_27_2_ARM32.copyInto(result, TOMB_OFFSET_27_2_ARM32)
+            FREE_RETURN_QUANTITY_HIGH_27_2_ARM32.copyInto(result, RETURN_QUANTITY_HIGH_OFFSET_27_2_ARM32)
+            FREE_RETURN_ITEM_27_2_ARM32.copyInto(result, RETURN_ITEM_OFFSET_27_2_ARM32)
+            replaceInstruction(result, RETURN_QUANTITY_LOW_OFFSET_27_2_ARM32, arm32Movw(2, freeReturnDaily))
+            FREE_RETURN_NO_PASS_27_2_ARM32.copyInto(result, RETURN_NO_PASS_OFFSET_27_2_ARM32)
+            FREE_RETURN_INACTIVE_PASS_27_2_ARM32.copyInto(result, RETURN_INACTIVE_PASS_OFFSET_27_2_ARM32)
+            replaceInstruction(result, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM32, arm32Movw(0, freeReturnDaily))
+            ARM32_BX_LR.copyInto(result, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM32 + 4)
+            ARM32_NOP.copyInto(result, RETURN_FREE_CONSUME_GUARD_OFFSET_27_2_ARM32)
+        }
+    }
+
+    private fun freeHeroStarUpgrades272Arm32(input: ByteArray): ByteArray {
+        verify272Arm32Native(input)
+        return input.copyOf().also { out ->
+            for ((offset, _, modified) in STAR_TEMPORARY_SHARD_PATCHES_27_2_ARM32) {
+                modified.copyInto(out, offset)
+            }
+        }
+    }
+
+    // Verified against XP Hero 27.2.0 arm64-v8a libil2cpp.so (file offsets == VA - 0x4000).
+    private const val ORIGINAL_SHA_27_2_ARM64 =
+        "0a776cdc25410216caf06dbcb690e1fe60a67982b424fc16d0fa3453e9150600"
+    private const val EXPECTED_SIZE_27_2_ARM64 = 89_001_608
+
+    private const val TRAIT_OFFSET_27_2_ARM64 = 0x2A97DD4
+    private val ORIGINAL_TRAIT_27_2_ARM64 = byteArrayOf(
+        0xFE.toByte(), 0x4F, 0xBF.toByte(), 0xA9.toByte(), 0xF3.toByte(), 0x03, 0x00, 0xAA.toByte()
+    )
+    private const val HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM64 = 0x2B714D0
+    private const val TOMB_OFFSET_27_2_ARM64 = 0x2C2C484
+    private const val RETURN_QUANTITY_OFFSET_27_2_ARM64 = 0x27CB47C
+    private const val RETURN_ITEM_OFFSET_27_2_ARM64 = 0x27CB494
+    private const val RETURN_NO_PASS_OFFSET_27_2_ARM64 = 0x27CB3E8
+    private val ORIGINAL_RETURN_NO_PASS_27_2_ARM64 = byteArrayOf(0x20, 0x02, 0x00, 0xB4.toByte())
+    private const val RETURN_INACTIVE_PASS_OFFSET_27_2_ARM64 = 0x27CB3F4
+    private val ORIGINAL_RETURN_INACTIVE_PASS_27_2_ARM64 = byteArrayOf(0xC0.toByte(), 0x01, 0x00, 0x36)
+    private const val INSTANT_RETURN_COUNT_OFFSET_27_2_ARM64 = 0x27C90B8
+    private const val RETURN_FREE_CONSUME_GUARD_OFFSET_27_2_ARM64 = 0x27CC278
+    private val ORIGINAL_RETURN_FREE_CONSUME_GUARD_27_2_ARM64 = byteArrayOf(0x80.toByte(), 0x01, 0x00, 0x36)
+
+    private val STAR_TEMPORARY_SHARD_PATCHES_27_2_ARM64 = listOf(
+        Triple(0x2B6607C,
+            byteArrayOf(0xD7.toByte(), 0x12, 0x40, 0xF9.toByte()),
+            byteArrayOf(0x37, 0x00, 0x80.toByte(), 0xD2.toByte())),
+        Triple(0x2B66094,
+            byteArrayOf(0x38, 0x19, 0x00, 0x94.toByte()),
+            byteArrayOf(0x41, 0x34, 0x00, 0x94.toByte())),
+        Triple(0x2B66098,
+            byteArrayOf(0x60, 0x1E, 0x00, 0x36),
+            byteArrayOf(0x1F, 0x20, 0x03, 0xD5.toByte())),
+        Triple(0x2B660A0,
+            byteArrayOf(0xD3.toByte(), 0x12, 0x40, 0xF9.toByte()),
+            byteArrayOf(0x33, 0x00, 0x80.toByte(), 0xD2.toByte())),
+    )
+
+    private fun verify272Arm64Native(input: ByteArray) {
+        require(input.size == EXPECTED_SIZE_27_2_ARM64) {
+            "Unsupported XP Hero 27.2.0 ARM64 library length"
+        }
+        require(equalAt(input, TOMB_OFFSET_27_2_ARM64 - 8, TOMB_NEIGHBORS)) {
+            "Unexpected XP Hero 27.2.0 ARM64 Heroes' Tomb instructions"
+        }
+        require(equalAt(input, HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM64 - 4, HERO_UNLOCK_COMPARE)) {
+            "Unexpected XP Hero 27.2.0 ARM64 zero-piece guard comparison"
+        }
+        val normalized = input.copyOf()
+        val choices = listOf(
+            Triple(TRAIT_OFFSET_27_2_ARM64, ORIGINAL_TRAIT_27_2_ARM64, FREE_TRAIT),
+            Triple(HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM64, ORIGINAL_HERO_UNLOCK_27, ZERO_HERO_UNLOCK_27),
+            Triple(TOMB_OFFSET_27_2_ARM64, ORIGINAL_TOMB, FREE_TOMB),
+            Triple(RETURN_ITEM_OFFSET_27_2_ARM64, ORIGINAL_RETURN_ITEM, FREE_RETURN_ITEM),
+            Triple(RETURN_NO_PASS_OFFSET_27_2_ARM64,
+                ORIGINAL_RETURN_NO_PASS_27_2_ARM64, FREE_RETURN_NO_PASS),
+            Triple(RETURN_INACTIVE_PASS_OFFSET_27_2_ARM64,
+                ORIGINAL_RETURN_INACTIVE_PASS_27_2_ARM64, FREE_RETURN_INACTIVE_PASS),
+            Triple(RETURN_FREE_CONSUME_GUARD_OFFSET_27_2_ARM64,
+                ORIGINAL_RETURN_FREE_CONSUME_GUARD_27_2_ARM64, INSTANT_RETURN_FREE_CONSUME_GUARD),
+        ) + STAR_TEMPORARY_SHARD_PATCHES_27_2_ARM64
+        for ((offset, original, changed) in choices) {
+            require(equalAt(input, offset, original) || equalAt(input, offset, changed)) {
+                "Unsupported XP Hero 27.2.0 ARM64 native instruction at 0x" + offset.toString(16)
+            }
+            original.copyInto(normalized, offset)
+        }
+        val qtyCode = instruction(input, RETURN_QUANTITY_OFFSET_27_2_ARM64)
+        val knownQty = (qtyCode and 0xFFE0001F.toInt()) == 0xD2800013.toInt() &&
+            ((qtyCode ushr 5) and 0xFFFF) in 10..5000
+        require(equalAt(input, RETURN_QUANTITY_OFFSET_27_2_ARM64, ORIGINAL_RETURN_QUANTITY) || knownQty) {
+            "Unsupported XP Hero 27.2.0 ARM64 Return daily quantity instruction"
+        }
+        ORIGINAL_RETURN_QUANTITY.copyInto(normalized, RETURN_QUANTITY_OFFSET_27_2_ARM64)
+        val cntCode = instruction(input, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM64)
+        val knownCnt = (cntCode and 0xFFE0001F.toInt()) == 0x52800000 &&
+            ((cntCode ushr 5) and 0xFFFF) in 10..5000 &&
+            equalAt(input, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM64 + 4, INSTANT_RETURN_COUNT_RET)
+        require(equalAt(input, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM64, ORIGINAL_RETURN_COUNT_ENTRY) || knownCnt) {
+            "Unsupported XP Hero 27.2.0 ARM64 free Return count function"
+        }
+        ORIGINAL_RETURN_COUNT_ENTRY.copyInto(normalized, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM64)
+        val sha = MessageDigest.getInstance("SHA-256").digest(normalized)
+            .joinToString("") { "%02x".format(it) }
+        require(sha == ORIGINAL_SHA_27_2_ARM64) {
+            "Unexpected XP Hero 27.2.0 ARM64 code; refusing native edits"
+        }
+    }
+
+    private fun freeHeroesTombRefills272Arm64(input: ByteArray, freeReturnDaily: Int): ByteArray {
+        verify272Arm64Native(input)
+        return input.copyOf().also { result ->
+            FREE_TOMB.copyInto(result, TOMB_OFFSET_27_2_ARM64)
+            replaceInstruction(result, RETURN_QUANTITY_OFFSET_27_2_ARM64,
+                0xD2800013.toInt() or (freeReturnDaily shl 5))
+            FREE_RETURN_ITEM.copyInto(result, RETURN_ITEM_OFFSET_27_2_ARM64)
+            FREE_RETURN_NO_PASS.copyInto(result, RETURN_NO_PASS_OFFSET_27_2_ARM64)
+            FREE_RETURN_INACTIVE_PASS.copyInto(result, RETURN_INACTIVE_PASS_OFFSET_27_2_ARM64)
+            replaceInstruction(result, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM64,
+                0x52800000 or (freeReturnDaily shl 5))
+            INSTANT_RETURN_COUNT_RET.copyInto(result, INSTANT_RETURN_COUNT_OFFSET_27_2_ARM64 + 4)
+            INSTANT_RETURN_FREE_CONSUME_GUARD.copyInto(result, RETURN_FREE_CONSUME_GUARD_OFFSET_27_2_ARM64)
+        }
+    }
+
+    private fun freeHeroStarUpgrades272Arm64(input: ByteArray): ByteArray {
+        verify272Arm64Native(input)
+        return input.copyOf().also { out ->
+            for ((offset, _, modified) in STAR_TEMPORARY_SHARD_PATCHES_27_2_ARM64) {
                 modified.copyInto(out, offset)
             }
         }
@@ -427,6 +696,18 @@ internal object XP135NativeEditor {
      * consumption as success, without changing positive piece spending.
      */
     fun allowZeroPieceHeroUnlock(input: ByteArray): ByteArray {
+        if (input.size == EXPECTED_SIZE_27_2_ARM64) {
+            verify272Arm64Native(input)
+            return input.copyOf().also {
+                ZERO_HERO_UNLOCK_27.copyInto(it, HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM64)
+            }
+        }
+        if (input.size == EXPECTED_SIZE_27_2_ARM32) {
+            verify272Arm32Native(input)
+            return input.copyOf().also {
+                ZERO_HERO_UNLOCK_27_2_ARM32.copyInto(it, HERO_UNLOCK_CONSUME_OFFSET_27_2_ARM32)
+            }
+        }
         if (input.size == EXPECTED_SIZE_27) {
             verify27Native(input)
             return input.copyOf().also {
@@ -445,6 +726,8 @@ internal object XP135NativeEditor {
      * callsite and consume it through the original successful one-shard path.
      */
     fun freeHeroStarUpgrades(input: ByteArray): ByteArray {
+        if (input.size == EXPECTED_SIZE_27_2_ARM64) return freeHeroStarUpgrades272Arm64(input)
+        if (input.size == EXPECTED_SIZE_27_2_ARM32) return freeHeroStarUpgrades272Arm32(input)
         if (input.size == EXPECTED_SIZE_27) return freeHeroStarUpgrades27(input)
         verify(input)
         return input.copyOf().also { result ->
@@ -460,6 +743,14 @@ internal object XP135NativeEditor {
     }
 
     fun freeTraitRerolls(input: ByteArray): ByteArray {
+        if (input.size == EXPECTED_SIZE_27_2_ARM64) {
+            verify272Arm64Native(input)
+            return input.copyOf().also { FREE_TRAIT.copyInto(it, TRAIT_OFFSET_27_2_ARM64) }
+        }
+        if (input.size == EXPECTED_SIZE_27_2_ARM32) {
+            verify272Arm32Native(input)
+            return input.copyOf().also { FREE_TRAIT_27_2_ARM32.copyInto(it, TRAIT_OFFSET_27_2_ARM32) }
+        }
         if (input.size == EXPECTED_SIZE_27) {
             verify27Native(input)
             return input.copyOf().also { FREE_TRAIT.copyInto(it, TRAIT_OFFSET_27) }
@@ -470,6 +761,8 @@ internal object XP135NativeEditor {
 
     fun freeHeroesTombRefills(input: ByteArray, freeReturnDaily: Int): ByteArray {
         require(freeReturnDaily in 10..5000) { "Invalid daily free Return ticket count" }
+        if (input.size == EXPECTED_SIZE_27_2_ARM64) return freeHeroesTombRefills272Arm64(input, freeReturnDaily)
+        if (input.size == EXPECTED_SIZE_27_2_ARM32) return freeHeroesTombRefills272Arm32(input, freeReturnDaily)
         if (input.size == EXPECTED_SIZE_27) return freeHeroesTombRefills27(input, freeReturnDaily)
         verify(input)
         return input.copyOf().also {

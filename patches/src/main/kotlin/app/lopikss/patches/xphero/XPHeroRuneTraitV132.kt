@@ -88,7 +88,8 @@ val xp132ZeroTraitRerollCoins = rawResourcePatch(
 ) {
     compatibleWith(XP_HERO)
     execute {
-        val library = get(XP132.ARM64)
+        val arm64 = get(XP132.ARM64)
+        val library = if (arm64.isFile) arm64 else get(XP135NativeEditor.ARM32)
         library.writeBytes(XP132.traitRerolls(library.readBytes()))
     }
 }

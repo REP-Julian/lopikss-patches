@@ -6,10 +6,12 @@ import java.security.MessageDigest
 internal object XP134TicketEditor {
     const val REMOTE = "assets/bin/Data/22fc19c3e5dc14f5ca465a3e6cd62dc3"
     const val REMOTE_27 = "assets/bin/Data/3d215194f0ca245868497014573f6f96"
+    const val REMOTE_27_2 = "assets/bin/Data/f09adad7044fc4bb1af3cdd712af4bb7"
     const val PVP = "assets/bin/Data/8f4cc030fdc024de3acdae95bb99e004"
     const val PVP_27 = "assets/bin/Data/57560bddb8aca4a848ee41d220acd630"
     private const val REMOTE_SHA = "c2f1df06c02d8723b569c532457eced4baee00f1c0bbb6a139bdcb3be801bfb1"
     private const val REMOTE_SHA_27 = "c18c4df4e626c554359e74a4073e01538d104465cbbe43220d304de08536c080"
+    private const val REMOTE_SHA_27_2 = "4d75f8ffa42377007c3f0a6612984f50b41558ca96e4973c4db864c00bf7c06c"
     private const val PVP_SHA = "a06150f47dfb4d441a10570466b0e43892c45c0136517f4fdf31880eb4d2d9ee"
     // Exact original XP Hero 27.0.0 ConfigData_47 SHA-256 (PvP).
     private const val PVP_SHA_27 = "2f150741c35cb7b1d40a15890c87f9f5351c1396994ec412a4a40e13caa0e0ff"
@@ -118,17 +120,29 @@ internal object XP134TicketEditor {
         input: ByteArray, sTicket: Boolean,
         dailyLimit: Int = 400, returnDaily: Int = 5000, freeReturns: Int = 5000,
     ): ByteArray {
+        val name272 = "RemoteConfig_347"
         val name27 = "RemoteConfig_341"
-        val is27 = input.size > 168 && le32(input, 144) == name27.length &&
+        val is272 = input.size > 168 && le32(input, 144) == name272.length &&
+            String(input, 148, name272.length, Charsets.ISO_8859_1) == name272
+        val is27 = !is272 && input.size > 168 && le32(input, 144) == name27.length &&
             String(input, 148, name27.length, Charsets.ISO_8859_1) == name27
-        val asset = parse(input, if (is27) name27 else "RemoteConfig_329")
+        val asset = parse(input, when {
+            is272 -> name272
+            is27 -> name27
+            else -> "RemoteConfig_329"
+        })
         var normalized = asset.text
         for ((key, original) in originals) {
             val current = value(asset.text, key)
             require(supported(key, current, original)) { "Unexpected current $key" }
             normalized = put(normalized, key, original)
         }
-        require(sha(asset.encode(normalized)) == (if (is27) REMOTE_SHA_27 else REMOTE_SHA)) {
+        val expectedRemoteSha = when {
+            is272 -> REMOTE_SHA_27_2
+            is27 -> REMOTE_SHA_27
+            else -> REMOTE_SHA
+        }
+        require(sha(asset.encode(normalized)) == expectedRemoteSha) {
             "Unsupported XP Hero RemoteConfig asset"
         }
         var modified = asset.text
